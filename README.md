@@ -11,5 +11,5 @@ and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/developing-packages). 
 -->
 
- A flutter package that extends default TabBarView to have children with dynamic height.
+The default `TabBarView` does not allows to have children with dynamic height. This package tried to solve that by extending default `TabBarView` and make required changes. `AutoScaleTabbarView` allows to have children with dynamic height.
 
