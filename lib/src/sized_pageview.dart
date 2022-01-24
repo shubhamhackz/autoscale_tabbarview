@@ -22,7 +22,7 @@ class SizedPageView extends StatefulWidget {
 }
 
 class _SizedPageViewState extends State<SizedPageView>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late List<double> _heights;
   int _currentIndex = 0;
 
