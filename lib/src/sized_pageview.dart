@@ -57,6 +57,7 @@ class _SizedPageViewState extends State<SizedPageView>
         dragStartBehavior: widget.dragStartBehavior,
         children: List.generate(widget.children.length, (index) {
           return OverflowBox(
+            minHeight: 0,
             maxHeight: double.infinity,
             alignment: Alignment.topCenter,
             child: SizeDetectorWidget(
