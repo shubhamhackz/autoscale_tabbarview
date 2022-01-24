@@ -11,5 +11,5 @@ and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/developing-packages). 
 -->
 
- A simple package which extends default TabbarView to have childreb with dynamic height..
+ A flutter package that extends default TabBarView to have children with dynamic height.
 
