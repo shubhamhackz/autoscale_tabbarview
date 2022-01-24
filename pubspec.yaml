@@ -1,7 +1,9 @@
 name: autoscale_tabbarview
-description: A new Flutter package project.
-version: 0.0.1
-homepage:
+description: A simple package which extends default TabbarView to have childreb with dynamic height.
+version: 1.0.0
+homepage: https://github.com/shubhamhackz/autoscale_tabbarview
+git: https://github.com/shubhamhackz/autoscale_tabbarview
+repository: https://github.com/shubhamhackz/autoscale_tabbarview
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
