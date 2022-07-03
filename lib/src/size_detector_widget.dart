@@ -21,7 +21,7 @@ class _SizeDetectorWidgetState extends State<SizeDetectorWidget> {
   @override
   void initState() {
     super.initState();
-    SchedulerBinding.instance?.addPostFrameCallback((_) => _detectSize());
+    SchedulerBinding.instance.addPostFrameCallback((_) => _detectSize());
   }
 
   @override
