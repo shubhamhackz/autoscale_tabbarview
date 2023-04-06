@@ -60,13 +60,15 @@ class _SizedPageViewState extends State<SizedPageView>
             minHeight: 0,
             maxHeight: double.infinity,
             alignment: Alignment.topCenter,
-            child: SizeDetectorWidget(
-              onSizeDetect: (size) {
-                if (mounted) {
-                  setState(() => _heights[index] = size.height);
-                }
-              },
-              child: Align(child: widget.children[index]),
+            child: Align(
+              child: SizeDetectorWidget(
+                onSizeDetect: (size){
+                  if (mounted && _heights[index] != size.height) {
+                    setState(() => _heights[index] = size.height);
+                  }
+                },
+                child: widget.children[index],
+              ),
             ),
           );
         }),
