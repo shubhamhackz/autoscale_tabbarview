@@ -151,7 +151,6 @@ class _AutoScaleTabBarViewState extends State<AutoScaleTabBarView> {
   }
 
   void _handleTabControllerAnimationTick() {
-    print('_handleTabControllerAnimationTick ');
     if (_warpUnderwayCount > 0 || !_controller!.indexIsChanging)
       return; // This widget is driving the controller's animation.
 
