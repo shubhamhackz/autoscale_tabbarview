@@ -105,7 +105,6 @@ class _AutoScaleTabBarViewState extends State<AutoScaleTabBarView> {
       final List<Widget> originalChildren = _childrenWithKey;
       setState(() {
         _warpUnderwayCount += 1;
-
         _childrenWithKey = List<Widget>.from(_childrenWithKey, growable: false);
         final Widget temp = _childrenWithKey[initialPage];
         _childrenWithKey[initialPage] = _childrenWithKey[widget.controller!.previousIndex];
@@ -130,8 +129,12 @@ class _AutoScaleTabBarViewState extends State<AutoScaleTabBarView> {
   @override
   void didUpdateWidget(AutoScaleTabBarView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.controller != oldWidget.controller) _updateTabController();
-    if (widget.children != oldWidget.children && _warpUnderwayCount == 0) _updateChildren();
+    if (widget.controller != oldWidget.controller) {
+      _updateTabController();
+    }
+    if (widget.children != oldWidget.children && _warpUnderwayCount == 0) {
+      _updateChildren();
+    }
     _warpToCurrentIndex();
   }
 
@@ -151,8 +154,9 @@ class _AutoScaleTabBarViewState extends State<AutoScaleTabBarView> {
   }
 
   void _handleTabControllerAnimationTick() {
-    if (_warpUnderwayCount > 0 || !_controller!.indexIsChanging)
+    if (_warpUnderwayCount > 0 || !_controller!.indexIsChanging) {
       return; // This widget is driving the controller's animation.
+    }
 
     if (_controller!.index != _currentIndex) {
       _currentIndex = _controller!.index;
@@ -171,6 +175,7 @@ class _AutoScaleTabBarViewState extends State<AutoScaleTabBarView> {
       await _pageController.animateToPage(_currentIndex!,
           duration: kTabScrollDuration, curve: Curves.ease);
       _warpUnderwayCount -= 1;
+
       return Future<void>.value();
     }
 

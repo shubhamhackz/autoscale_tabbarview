@@ -21,7 +21,21 @@ class _SizeDetectorWidgetState extends State<SizeDetectorWidget> {
   @override
   void initState() {
     super.initState();
-    SchedulerBinding.instance?.addPostFrameCallback((_) => _detectSize());
+    SchedulerBinding.instance.addPostFrameCallback((_) => _detectSize());
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  @override
+  void didUpdateWidget(SizeDetectorWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    //recheck size when widget changes or items change
+    Future.microtask(() {
+      _detectSize();
+    });
   }
 
   @override
