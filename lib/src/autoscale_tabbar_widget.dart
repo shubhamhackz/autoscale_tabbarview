@@ -135,7 +135,6 @@ class _AutoScaleTabBarViewState extends State<AutoScaleTabBarView> {
     if (widget.children != oldWidget.children && _warpUnderwayCount == 0) {
       _updateChildren();
     }
-    _warpToCurrentIndex();
   }
 
   @override

@@ -47,6 +47,12 @@ class _SizedPageViewState extends State<SizedPageView> with TickerProviderStateM
   Widget build(BuildContext context) {
     return TweenAnimationBuilder<double>(
       curve: Curves.easeInOutCubic,
+      onEnd: () {
+        if (!mounted) {
+          return;
+        }
+        setState(() {});
+      },
       duration: const Duration(milliseconds: 100),
       tween: Tween<double>(begin: _heights[0], end: _currentHeight),
       builder: (context, value, child) => SizedBox(height: value, child: child),
