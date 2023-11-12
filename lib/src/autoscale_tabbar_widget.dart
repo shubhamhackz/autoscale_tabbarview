@@ -61,8 +61,7 @@ class _AutoScaleTabBarViewState extends State<AutoScaleTabBarView> {
   bool get _controllerIsValid => _controller?.animation != null;
 
   void _updateTabController() {
-    final TabController? newController =
-        widget.controller ?? DefaultTabController.of(context);
+    final TabController? newController = widget.controller ?? DefaultTabController.of(context);
     assert(() {
       if (newController == null) {
         throw FlutterError(
@@ -78,11 +77,11 @@ class _AutoScaleTabBarViewState extends State<AutoScaleTabBarView> {
 
     if (newController == _controller) return;
 
-    if (_controllerIsValid)
+    if (_controllerIsValid) {
       _controller!.animation!.removeListener(_handleTabControllerAnimationTick);
+    }
     _controller = newController;
-    if (_controller != null)
-      _controller!.animation!.addListener(_handleTabControllerAnimationTick);
+    if (_controller != null) _controller!.animation!.addListener(_handleTabControllerAnimationTick);
   }
 
   @override
@@ -95,22 +94,54 @@ class _AutoScaleTabBarViewState extends State<AutoScaleTabBarView> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _updateTabController();
-    _currentIndex = _controller?.index;
-    _pageController = PageController(initialPage: _currentIndex ?? 0);
+    _currentIndex = widget.controller?.index ?? _controller?.index ?? 0;
+    _pageController = PageController(initialPage: _currentIndex ?? widget.controller?.index ?? 0);
+    // _warpToCurrentIndex();
+    _updateChildren();
+    Future.microtask(() async {
+      final int initialPage = _currentIndex! > widget.controller!.previousIndex
+          ? _currentIndex! - 1
+          : _currentIndex! + 1;
+      final List<Widget> originalChildren = _childrenWithKey;
+      setState(() {
+        _warpUnderwayCount += 1;
+        _childrenWithKey = List<Widget>.from(_childrenWithKey, growable: false);
+        final Widget temp = _childrenWithKey[initialPage];
+        _childrenWithKey[initialPage] = _childrenWithKey[widget.controller!.previousIndex];
+        _childrenWithKey[widget.controller!.previousIndex] = temp;
+      });
+      _pageController.jumpToPage(initialPage);
+
+      await _pageController.animateToPage(_currentIndex!,
+          duration: const Duration(milliseconds: 1), curve: Curves.ease);
+      if (!mounted) return Future<void>.value();
+      setState(() {
+        _warpUnderwayCount -= 1;
+        if (widget.children != _children) {
+          _updateChildren();
+        } else {
+          _childrenWithKey = originalChildren;
+        }
+      });
+    });
   }
 
   @override
   void didUpdateWidget(AutoScaleTabBarView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.controller != oldWidget.controller) _updateTabController();
-    if (widget.children != oldWidget.children && _warpUnderwayCount == 0)
+    if (widget.controller != oldWidget.controller) {
+      _updateTabController();
+    }
+    if (widget.children != oldWidget.children && _warpUnderwayCount == 0) {
       _updateChildren();
+    }
   }
 
   @override
   void dispose() {
-    if (_controllerIsValid)
+    if (_controllerIsValid) {
       _controller!.animation!.removeListener(_handleTabControllerAnimationTick);
+    }
     _controller = null;
     // We don't own the _controller Animation, so it's not disposed here.
     super.dispose();
@@ -122,8 +153,9 @@ class _AutoScaleTabBarViewState extends State<AutoScaleTabBarView> {
   }
 
   void _handleTabControllerAnimationTick() {
-    if (_warpUnderwayCount > 0 || !_controller!.indexIsChanging)
+    if (_warpUnderwayCount > 0 || !_controller!.indexIsChanging) {
       return; // This widget is driving the controller's animation.
+    }
 
     if (_controller!.index != _currentIndex) {
       _currentIndex = _controller!.index;
@@ -134,8 +166,7 @@ class _AutoScaleTabBarViewState extends State<AutoScaleTabBarView> {
   Future<void> _warpToCurrentIndex() async {
     if (!mounted) return Future<void>.value();
 
-    if (_pageController.page == _currentIndex!.toDouble())
-      return Future<void>.value();
+    if (_pageController.page == _currentIndex!.toDouble()) return Future<void>.value();
 
     final int previousIndex = _controller!.previousIndex;
     if ((_currentIndex! - previousIndex).abs() == 1) {
@@ -143,13 +174,13 @@ class _AutoScaleTabBarViewState extends State<AutoScaleTabBarView> {
       await _pageController.animateToPage(_currentIndex!,
           duration: kTabScrollDuration, curve: Curves.ease);
       _warpUnderwayCount -= 1;
+
       return Future<void>.value();
     }
 
     assert((_currentIndex! - previousIndex).abs() > 1);
-    final int initialPage = _currentIndex! > previousIndex
-        ? _currentIndex! - 1
-        : _currentIndex! + 1;
+    final int initialPage =
+        _currentIndex! > previousIndex ? _currentIndex! - 1 : _currentIndex! + 1;
     final List<Widget> originalChildren = _childrenWithKey;
     setState(() {
       _warpUnderwayCount += 1;
@@ -181,20 +212,17 @@ class _AutoScaleTabBarViewState extends State<AutoScaleTabBarView> {
     if (notification.depth != 0) return false;
 
     _warpUnderwayCount += 1;
-    if (notification is ScrollUpdateNotification &&
-        !_controller!.indexIsChanging) {
+    if (notification is ScrollUpdateNotification && !_controller!.indexIsChanging) {
       if ((_pageController.page! - _controller!.index).abs() > 1.0) {
         _controller!.index = _pageController.page!.floor();
         _currentIndex = _controller!.index;
       }
-      _controller!.offset =
-          (_pageController.page! - _controller!.index).clamp(-1.0, 1.0);
+      _controller!.offset = (_pageController.page! - _controller!.index).clamp(-1.0, 1.0);
     } else if (notification is ScrollEndNotification) {
       _controller!.index = _pageController.page!.round();
       _currentIndex = _controller!.index;
       if (!_controller!.indexIsChanging) {
-        _controller!.offset =
-            (_pageController.page! - _controller!.index).clamp(-1.0, 1.0);
+        _controller!.offset = (_pageController.page! - _controller!.index).clamp(-1.0, 1.0);
       }
     }
     _warpUnderwayCount -= 1;

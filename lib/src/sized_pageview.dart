@@ -21,8 +21,7 @@ class SizedPageView extends StatefulWidget {
   _SizedPageViewState createState() => _SizedPageViewState();
 }
 
-class _SizedPageViewState extends State<SizedPageView>
-    with TickerProviderStateMixin {
+class _SizedPageViewState extends State<SizedPageView> with TickerProviderStateMixin {
   late List<double> _heights;
   int _currentIndex = 0;
 
@@ -48,6 +47,12 @@ class _SizedPageViewState extends State<SizedPageView>
   Widget build(BuildContext context) {
     return TweenAnimationBuilder<double>(
       curve: Curves.easeInOutCubic,
+      onEnd: () {
+        if (!mounted) {
+          return;
+        }
+        setState(() {});
+      },
       duration: const Duration(milliseconds: 100),
       tween: Tween<double>(begin: _heights[0], end: _currentHeight),
       builder: (context, value, child) => SizedBox(height: value, child: child),
@@ -62,9 +67,8 @@ class _SizedPageViewState extends State<SizedPageView>
             alignment: Alignment.topCenter,
             child: SizeDetectorWidget(
               onSizeDetect: (size) {
-                if (mounted) {
-                  setState(() => _heights[index] = size.height);
-                }
+                if (!mounted) return;
+                setState(() => _heights[index] = size.height);
               },
               child: Align(child: widget.children[index]),
             ),
