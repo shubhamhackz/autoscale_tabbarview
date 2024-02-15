@@ -21,8 +21,7 @@ class SizedPageView extends StatefulWidget {
   _SizedPageViewState createState() => _SizedPageViewState();
 }
 
-class _SizedPageViewState extends State<SizedPageView>
-    with TickerProviderStateMixin {
+class _SizedPageViewState extends State<SizedPageView> with TickerProviderStateMixin {
   late List<double> _heights;
   int _currentIndex = 0;
 
@@ -32,14 +31,13 @@ class _SizedPageViewState extends State<SizedPageView>
   void initState() {
     super.initState();
     _heights = List.generate(widget.children.length, (index) => 0.0);
+    final int initialIndex = widget.pageController.initialPage;
+    _setCurrentIndex(initialIndex);
 
     widget.pageController.addListener(() {
-      final _newIndex = widget.pageController.page?.round();
-      if (_currentIndex != _newIndex) {
-        if (!mounted) {
-          return;
-        }
-        setState(() => _currentIndex = _newIndex!);
+      final int? newIndex = widget.pageController.page?.round();
+      if (newIndex != null) {
+        _setCurrentIndex(newIndex);
       }
     });
   }
@@ -78,5 +76,14 @@ class _SizedPageViewState extends State<SizedPageView>
   void dispose() {
     widget.pageController.dispose();
     super.dispose();
+  }
+
+  void _setCurrentIndex(int newIndex) {
+    if (_currentIndex != newIndex) {
+      if (!mounted) {
+        return;
+      }
+      setState(() => _currentIndex = newIndex);
+    }
   }
 }
