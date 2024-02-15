@@ -19,13 +19,8 @@ class _SizeDetectorWidgetState extends State<SizeDetectorWidget> {
   Size? _oldSize;
 
   @override
-  void initState() {
-    super.initState();
-    SchedulerBinding.instance?.addPostFrameCallback((_) => _detectSize());
-  }
-
-  @override
   Widget build(BuildContext context) {
+    SchedulerBinding.instance?.addPostFrameCallback((_) => _detectSize());
     return widget.child;
   }
 
